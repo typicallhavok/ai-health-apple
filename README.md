@@ -14,7 +14,7 @@ A full-stack health monitoring application with authentication, file upload, and
 ### 1. Update Existing Passwords (if you have existing users)
 
 ```bash
-mysql -h 192.168.122.11 -u havok -pmaria apple_health < update_passwords.sql
+mysql -u havok -pmaria apple_health < update_passwords.sql
 ```
 
 ### 2. Start the Server
@@ -87,7 +87,4 @@ health-monitor/
 - Credentials are stored in localStorage (for demo purposes)
 - In production, use HTTPS and proper session management
 
-## Default User (after running update_passwords.sql)
 
-- Username: `havok`
-- Password: `abcd`
