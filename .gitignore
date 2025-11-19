@@ -15,6 +15,7 @@ uploads
 example.md
 ddl.txt
 curl.txt
+*.pdf
 
 # screenshots for project_report
 image*.png

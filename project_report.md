@@ -1,8 +1,3 @@
-# Health Monitor System
-## Database Management System Project Report
-
----
-
 <div style="text-align: center; padding: 50px;">
 
 # HEALTH MONITOR SYSTEM
@@ -1861,4 +1856,7 @@ CONCAT('{', '"key":', value, ',', '"key2":', value2, '}')
 ```
 
 ---
+
+# 13. Github link
+[https://github.com/typicallhavok/ai-health-apple](https://github.com/typicallhavok/ai-health-apple)
 
