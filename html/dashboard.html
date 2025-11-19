@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Monitor Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><img src="/static/logo.png" alt="img" width="50" height="50"> Health Monitor Dashboard</h1>
+            <p class="subtitle">Apple Health Data Analytics</p>
+            <div class="header-actions">
+                <a href="/chat" class="btn btn-primary">💬 AI Chat</a>
+                <a href="/upload" class="btn btn-secondary">Upload Data</a>
+                <button id="deleteUserBtn" class="btn btn-danger">Delete Account</button>
+                <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate">
+            </div>
+            
+            <div class="control-group">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate">
+            </div>
+            
+            <button id="loadData" class="btn btn-primary">Load Data</button>
+            <button id="quickWeek" class="btn btn-secondary">Last 7 Days</button>
+            <button id="quickMonth" class="btn btn-secondary">Last 30 Days</button>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Loading data...</p>
+        </div>
+
+        <div id="error" class="error-message hidden"></div>
+
+        <div class="dashboard">
+            <!-- Overview Cards -->
+            <section class="overview-section">
+                <h2>Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">💓</div>
+                        <div class="stat-content">
+                            <h3>Latest HRV</h3>
+                            <p class="stat-value" id="latestHRV">--</p>
+                            <p class="stat-unit">ms</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-content">
+                            <h3>7-Day Avg HRV</h3>
+                            <p class="stat-value" id="avgHRV7d">--</p>
+                            <p class="stat-unit">ms</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">❤️</div>
+                        <div class="stat-content">
+                            <h3>Avg Heart Rate</h3>
+                            <p class="stat-value" id="avgHR">--</p>
+                            <p class="stat-unit">bpm</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <h3>HR Range</h3>
+                            <p class="stat-value" id="hrRange">--</p>
+                            <p class="stat-unit">bpm</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HRV Chart -->
+            <section class="chart-section">
+                <h2>Heart Rate Variability (Daily)</h2>
+                <div class="chart-container">
+                    <canvas id="hrvChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Heart Rate Chart -->
+            <section class="chart-section">
+                <h2>Heart Rate (Daily)</h2>
+                <div class="chart-container">
+                    <canvas id="heartRateChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Activity Summary -->
+            <section class="chart-section">
+                <h2>Activity Summary</h2>
+                <div class="chart-container">
+                    <canvas id="activityChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Daily Snapshots -->
+            <section class="workouts-section">
+                <h2>Daily Snapshots</h2>
+                <div id="snapshotsList" class="workouts-list">
+                    <p class="no-data">No snapshot data available</p>
+                </div>
+            </section>
+
+            <!-- Workouts -->
+            <section class="workouts-section">
+                <h2>Recent Workouts</h2>
+                <div id="workoutsList" class="workouts-list">
+                    <p class="no-data">No workout data available</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="/static/dashboard.js"></script>
+    <script>
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('healthMonitorAuth');
+            window.location.href = '/';
+        });
+
+        // Delete user functionality
+        document.getElementById('deleteUserBtn').addEventListener('click', async () => {
+            const confirmed = confirm(
+                '⚠️ WARNING: This will permanently delete your account and ALL your health data!\n\n' +
+                'This action cannot be undone.\n\n' +
+                'Are you absolutely sure you want to continue?'
+            );
+            
+            if (!confirmed) return;
+            
+            const doubleConfirm = prompt(
+                'Type "DELETE" (in capitals) to confirm account deletion:'
+            );
+            
+            if (doubleConfirm !== 'DELETE') {
+                alert('Account deletion cancelled.');
+                return;
+            }
+            
+            try {
+                const auth = JSON.parse(localStorage.getItem('healthMonitorAuth'));
+                if (!auth) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                const response = await fetch('http://localhost:8000/api/user/delete', {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Basic ' + btoa(auth.credentials.username + ':' + auth.credentials.password)
+                    }
+                });
+                
+                if (response.ok) {
+                    alert('Your account has been deleted successfully.');
+                    localStorage.removeItem('healthMonitorAuth');
+                    window.location.href = '/';
+                } else {
+                    const data = await response.json();
+                    alert('Failed to delete account: ' + (data.detail || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                alert('Failed to delete account: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

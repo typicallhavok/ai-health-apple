@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Health Chat - Health Monitor</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.0.0/marked.min.js"></script>
+</head>
+<body>
+    <div class="chat-layout">
+        <!-- Sidebar -->
+        <aside class="chat-sidebar">
+            <div class="chat-sidebar-header">
+                <h2>🏥 Health Chat</h2>
+                <button id="newChatBtn" class="btn btn-primary btn-sm">+ New Chat</button>
+            </div>
+            
+            <div class="chat-list" id="chatList">
+                <p class="no-data">Loading chats...</p>
+            </div>
+            
+            <div class="chat-sidebar-footer">
+                <a href="/dashboard" class="btn btn-secondary btn-sm">Dashboard</a>
+                <a href="/upload" class="btn btn-secondary btn-sm">Upload</a>
+                <button id="logoutBtn" class="btn btn-secondary btn-sm">Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-main">
+            <div id="noChatSelected" class="no-chat-selected">
+                <div class="welcome-message">
+                    <h1>🤖 AI Health Assistant</h1>
+                    <p>Ask questions about your health data and get AI-powered insights</p>
+                    <button id="startNewChatBtn" class="btn btn-primary">Start New Chat</button>
+                </div>
+            </div>
+
+            <div id="chatContainer" class="chat-container hidden">
+                <div class="chat-header">
+                    <h3 id="chatTitle">New Chat</h3>
+                    <div class="chat-actions">
+                        <button id="renameChatBtn" class="btn btn-secondary btn-sm">Rename</button>
+                        <button id="deleteChatBtn" class="btn btn-danger btn-sm">Delete</button>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be added here -->
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="health-data-toggle">
+                        <label>
+                            <input type="checkbox" id="useHealthData">
+                            <span>📊 Include health insights</span>
+                        </label>
+                        <select id="insightType" class="insight-selector" disabled>
+                            <option value="raw_data">Last 7 Days Data</option>
+                            <option value="trend_summary">Trend Summary (14 days)</option>
+                            <option value="consistency_score">Consistency Score (30 days)</option>
+                            <option value="correlations">Correlations Analysis (30 days)</option>
+                            <option value="comprehensive">Comprehensive Analysis</option>
+                        </select>
+                    </div>
+                    <form id="chatForm" class="chat-input-form">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Ask about your health data..."
+                            rows="3"
+                        ></textarea>
+                        <button type="submit" class="btn btn-primary" id="sendBtn">
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Chat Modal -->
+    <div id="newChatModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Create New Chat</h3>
+            <form id="newChatForm">
+                <div class="form-group">
+                    <label for="newChatName">Chat Name</label>
+                    <input type="text" id="newChatName" required placeholder="e.g., Weekly Health Review">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelNewChat">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rename Chat Modal -->
+    <div id="renameChatModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Rename Chat</h3>
+            <form id="renameChatForm">
+                <div class="form-group">
+                    <label for="renameChatName">New Name</label>
+                    <input type="text" id="renameChatName" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelRename">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Rename</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/chat.js"></script>
+</body>
+</html>
