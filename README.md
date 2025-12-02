@@ -4,10 +4,10 @@ A full-stack health monitoring application with authentication, file upload, and
 
 ## Features
 
-- 🔐 **User Authentication** - Login/Register system with password hashing
-- 📤 **File Upload** - Upload Apple Health export ZIP files
-- 📊 **Data Visualization** - Interactive charts for HRV, heart rate, activity, and workouts
-- 🔒 **Protected Routes** - All data endpoints require authentication
+- **User Authentication** - Login/Register system with password hashing
+- **File Upload** - Upload Apple Health export ZIP files
+- **Data Visualization** - Interactive charts for HRV, heart rate, activity, and workouts
+- **Protected Routes** - All data endpoints require authentication
 
 ## Setup
 
