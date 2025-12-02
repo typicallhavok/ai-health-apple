@@ -1,6 +1,6 @@
-# Health Monitor - Complete Setup
+# AI Health Monitor
 
-A full-stack health monitoring application with authentication, file upload, and data visualization.
+A full-stack health monitoring application with authentication, Agentic AI, and data visualization using data from apple health.
 
 ## Features
 
